@@ -1,12 +1,21 @@
 {
   "name": "codember2022",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Eduardo Villaverde Espeso",
+  "license": "ISC",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eduvilla97/Codember2022.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eduvilla97/Codember2022/issues"
+  },
+  "homepage": "https://github.com/eduvilla97/Codember2022#readme",
+  "description": ""
 }
