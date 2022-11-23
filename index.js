@@ -56,3 +56,10 @@ const challenge02 = () => {
 		.trim();
 	console.log('Result challenge02:', words);
 };
+
+const challenge03 = () => {
+	const colors = fs.readFileSync(path.join(__dirname, 'inputs', 'colors.txt'), 'utf-8').toString().trim().replace('[', '').replace(']', '').trim().split(', ');
+	colors.map((color) => console.log(color));
+}
+
+challenge03();
