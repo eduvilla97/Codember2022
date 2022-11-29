@@ -58,8 +58,64 @@ const challenge02 = () => {
 };
 
 const challenge03 = () => {
-	const colors = fs.readFileSync(path.join(__dirname, 'inputs', 'colors.txt'), 'utf-8').toString().trim().replace('[', '').replace(']', '').trim().split(', ');
-	colors.map((color) => console.log(color));
+	const colors = fs.readFileSync(path.join(__dirname, 'inputs', 'colors.txt'), 'utf-8').toString().trim().replace('[', '').replace(']', '').replaceAll('"', '').trim().split(', ');
+
+	const { largestChainLastColor, largestChainLength } = colors.reduce(({ currentChainColors, currentChainLength, currentChainLastColor, largestChainLastColor, largestChainLength }, color) => {
+		if (currentChainColors.includes(color) && color !== currentChainLastColor) {
+			// Seguimos en la cadena y mantenemos la alternancia
+			if (currentChainLength === 1) // Esto deberia ir antes porque si solo hay un color en currentChainColors nunca llegara aqui
+				// Nueva cadena hay que añadir el color
+				return {
+					currentChainColors: currentChainColors.concat([color]),
+					currentChainLength: currentChainLength + 1,
+					currentChainLastColor: color,
+					largestChainLastColor,
+					largestChainLength
+				};
+			else
+				return {
+					currentChainColors,
+					currentChainLength: currentChainLength + 1,
+					currentChainLastColor: color,
+					largestChainLastColor,
+					largestChainLength
+				};
+		} else {
+			// La cadena se ha roto hay que tomar el nuevo color como inicio de la siguiente cadena
+			return {
+				currentChainColors: [color],
+				currentChainLength: 1,
+				currentChainLastColor: color,
+				largestChainLength: currentChainLength >= largestChainLength ? currentChainLength : largestChainLength,
+				largestChainLastColor: currentChainLength >= largestChainLength ? currentChainLastColor : largestChainLastColor,
+			};
+		}
+	}, { currentChainColors: [], currentChainLength: 0, currentChainLastColor: '', largestChainLastColor: '', largestChainLength: 0 })
+	console.log({ largestChainLastColor, largestChainLength });
+}
+
+const challenge04 = () => {
+	const lowBound = 11098;
+	const highBound = 98123;
+	let number;
+	let nNumbers = 0;
+	let number55 = 0;
+	for (let i = lowBound; i <= highBound; i++) {
+		number = i.toString().split('');
+		let { digits, occurrences5, rGEL } = number.reduce(({ digits, occurrences5, prevDigit, rGEL }, newDigit) => {
+			return {
+				digits: digits + 1,
+				occurrences5: newDigit === '5' ? occurrences5 + 1 : occurrences5,
+				prevDigit: newDigit,
+				rGEL: rGEL && (Number.parseInt(newDigit) >= Number.parseInt(prevDigit))
+			}
+		}, { digits: 0, occurrences5: 0, prevDigit: 0, rGEL: true });
+		if (digits === 5 && occurrences5 >= 2 && rGEL) {
+			nNumbers++;
+			number55 = nNumbers === 56 ? i : number55;
+		}
+	}
+	console.log({ nNumbers, number55 });
 }
 
 challenge03();
