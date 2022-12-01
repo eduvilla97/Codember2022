@@ -61,10 +61,10 @@ const challenge03 = () => {
 	const colors = fs.readFileSync(path.join(__dirname, 'inputs', 'colors.txt'), 'utf-8').toString().trim().replace('[', '').replace(']', '').replaceAll('"', '').trim().split(', ');
 
 	const { largestChainLastColor, largestChainLength } = colors.reduce(({ currentChainColors, currentChainLength, currentChainLastColor, largestChainLastColor, largestChainLength }, color) => {
-		if (currentChainColors.includes(color) && color !== currentChainLastColor) {
-			// Seguimos en la cadena y mantenemos la alternancia
-			if (currentChainLength === 1) // Esto deberia ir antes porque si solo hay un color en currentChainColors nunca llegara aqui
-				// Nueva cadena hay que añadir el color
+		if (currentChainLength === 1) {
+			// Solo hay un color en la cadena actual
+			if (color !== currentChainLastColor)
+				// No se repite color: [red, blue, ...]
 				return {
 					currentChainColors: currentChainColors.concat([color]),
 					currentChainLength: currentChainLength + 1,
@@ -73,23 +73,34 @@ const challenge03 = () => {
 					largestChainLength
 				};
 			else
+				// Se repite color: [red, red, ...] ( reiniciamos cadena )
 				return {
-					currentChainColors,
-					currentChainLength: currentChainLength + 1,
+					currentChainColors: [color],
+					currentChainLength: 1,
 					currentChainLastColor: color,
-					largestChainLastColor,
-					largestChainLength
-				};
-		} else {
-			// La cadena se ha roto hay que tomar el nuevo color como inicio de la siguiente cadena
+					largestChainLength: currentChainLength > largestChainLength ? currentChainLength : largestChainLength,
+					largestChainLastColor: currentChainLength > largestChainLength ? currentChainLastColor : largestChainLastColor,
+				}
+		}
+		if (currentChainColors.includes(color) && color !== currentChainLastColor) {
+			// Estamos dentro de la cadena y seguimos alternando colores
+			return {
+				currentChainColors: currentChainColors,
+				currentChainLength: currentChainLength + 1,
+				currentChainLastColor: color,
+				largestChainLastColor,
+				largestChainLength
+			};
+		}
+		else
+			// Se rompio la cadena
 			return {
 				currentChainColors: [color],
 				currentChainLength: 1,
 				currentChainLastColor: color,
-				largestChainLength: currentChainLength >= largestChainLength ? currentChainLength : largestChainLength,
-				largestChainLastColor: currentChainLength >= largestChainLength ? currentChainLastColor : largestChainLastColor,
+				largestChainLength: currentChainLength > largestChainLength ? currentChainLength : largestChainLength,
+				largestChainLastColor: currentChainLength > largestChainLength ? currentChainLastColor : largestChainLastColor,
 			};
-		}
 	}, { currentChainColors: [], currentChainLength: 0, currentChainLastColor: '', largestChainLastColor: '', largestChainLength: 0 })
 	console.log({ largestChainLastColor, largestChainLength });
 }
